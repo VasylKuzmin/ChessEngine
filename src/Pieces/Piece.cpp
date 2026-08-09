@@ -1,12 +1,31 @@
 #include "Pieces/Piece.h"
+
 #include <iostream>
 
-void Piece::move(Position newPosition)
+Piece::Piece(Position position, Color color, PieceType type)
+    : position(position), color(color), type(type) {}
+
+Color Piece::getColor() const
 {
-    position = newPosition;
+    return color;
 }
 
-void Piece::displayPosition()
+std::string_view Piece::getColorString() const
 {
-    std::cout << "Position: " << position.getHorizontal() << position.getVertical() << std::endl;
+    return colorNames[static_cast<int>(color)];
+}
+
+PieceType Piece::getType() const
+{
+    return type;
+}
+
+std::string_view Piece::getTypeString() const
+{
+    return pieceTypeNames[static_cast<int>(type)];
+}
+
+Position Piece::getPosition() const
+{
+    return position;
 }

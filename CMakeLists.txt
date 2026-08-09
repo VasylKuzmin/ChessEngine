@@ -1,7 +1,4 @@
-﻿# CMakeList.txt : CMake project for Double Decker, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.10)
+﻿cmake_minimum_required (VERSION 3.10)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -12,7 +9,7 @@ endif()
 project ("DoubleDecker")
 
 # Add source to this project's executable.
-add_executable (CMakeTarget "src/DoubleDecker.cpp" "src/Pieces/Pawn.cpp" "src/Pieces/Piece.cpp" "src/Position.cpp")
+add_executable (CMakeTarget "src/DoubleDecker.cpp" "src/Pieces/Pawn.cpp" "src/Pieces/Piece.cpp" "src/Position.cpp" "src/Board.cpp" "src/PieceFactory.cpp")
 target_include_directories(CMakeTarget PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
