@@ -1,9 +1,14 @@
 #include "Pieces/Piece.h"
-
-#include <iostream>
+#include "Board.h"
 
 Piece::Piece(Position position, Color color, PieceType type)
     : position(position), color(color), type(type) {}
+
+void Piece::setPosition(Position newPosition)
+{
+    position = newPosition;
+    hasMoved = true;
+}
 
 Color Piece::getColor() const
 {
@@ -28,4 +33,9 @@ std::string_view Piece::getTypeString() const
 Position Piece::getPosition() const
 {
     return position;
+}
+
+int Piece::getDirection() const
+{
+    return (color == Color::White) ? 1 : -1;
 }

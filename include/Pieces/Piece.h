@@ -12,16 +12,19 @@ class Board; // Forward declaration of Board class
 class Piece
 {
   public:
-    Piece(Position position, Color color, PieceType type);
+    Piece(Position, Color, PieceType);
+    void setPosition(Position);
     Color getColor() const;
+    virtual int getDirection() const; // returns 1 for White and -1 for Black
     std::string_view getColorString() const;
     PieceType getType() const;
     std::string_view getTypeString() const;
     Position getPosition() const;
-    virtual std::vector<Position> getPseudoLegalMoves(Board& board) const = 0;
+    virtual std::vector<Position> getPseudoLegalMoves(Board&) const = 0;
 
   protected:
     Position position;
     Color color;
     PieceType type;
+    bool hasMoved{false};
 };

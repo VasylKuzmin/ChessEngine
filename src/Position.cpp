@@ -2,16 +2,14 @@
 
 #include <stdexcept>
 
-Position::Position(char horizontal, int vertical) : horizontal(horizontal), vertical(vertical)
+std::optional<Position> Position::tryCreate(char horizontal, int vertical)
 {
-    if (horizontal < 'a' || horizontal > 'h')
+    if (horizontal < 'a' || horizontal > 'h' || vertical < 1 || vertical > 8)
     {
-        throw std::invalid_argument("Invalid horizontal position");
+        return std::nullopt;
     }
-    if (vertical < 1 || vertical > 8)
-    {
-        throw std::invalid_argument("Invalid vertical position");
-    }
+    
+    return Position(horizontal, vertical);
 }
 
 char Position::getHorizontal() const
@@ -39,14 +37,14 @@ std::string Position::getPositionString() const
     return std::string(1, horizontal) + std::to_string(vertical);
 }
 
-Position Position::offset(int horizontalOffset, int verticalOffset) const
+std::optional<Position> Position::offset(Offset offset) const
 {
-    return Position(horizontal + horizontalOffset, vertical + verticalOffset);
+    return Position::tryCreate(horizontal + offset.horizontal, vertical + offset.vertical);
 }
 
-Position Position::fromString(const std::string& positionString)
+std::optional<Position> Position::fromString(const std::string& positionString)
 {
-    return Position(positionString[0], positionString[1] - '0');
+    return Position::tryCreate(positionString[0], positionString[1] - '0');
 }
 
 bool Position::operator==(const Position & other) const

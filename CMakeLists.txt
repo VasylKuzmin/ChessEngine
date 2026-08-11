@@ -9,7 +9,7 @@ endif()
 project ("DoubleDecker")
 
 # Add source to this project's executable.
-add_executable (CMakeTarget "src/DoubleDecker.cpp" "src/Pieces/Pawn.cpp" "src/Pieces/Piece.cpp" "src/Position.cpp" "src/Board.cpp" "src/PieceFactory.cpp")
+add_executable (CMakeTarget "src/DoubleDecker.cpp" "src/Pieces/Pawn.cpp" "src/Pieces/Piece.cpp" "src/Position.cpp" "src/Board.cpp"  "src/Pieces/Knight.cpp" "src/Pieces/King.cpp" "src/Pieces/Rook.cpp" "src/Pieces/Bishop.cpp" "src/Pieces/Queen.cpp")
 target_include_directories(CMakeTarget PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
