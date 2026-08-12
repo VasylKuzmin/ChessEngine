@@ -2,38 +2,61 @@
 
 #include "Board.h"
 
-Pawn::Pawn(Position position, Color color) : Piece(position, color, PieceType::Pawn)
+Pawn::Pawn(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Pawn, board)
 {
 }
 
-std::vector<Position> Pawn::getPseudoLegalMoves(Board& board) const 
+std::vector<Move> Pawn::getPseudoLegalMoves() const
 {
-    std::vector<Position> moves;
-    
+    std::vector<Move> moves;
+
+    // Forward one
     auto target = position.offset({0, getDirection()});
     if (target && board.isEmpty(*target))
     {
-        moves.push_back(*target);
+        moves.push_back({position, *target, PieceType::Pawn});
     }
 
-    target = position.offset({1, getDirection()});
-    if (target && board.isEnemy(*target, color))
+    // Diagonal captures / en passant
+    for (int horizontal : {-1, 1})
     {
-        moves.push_back(*target);
+        auto target = position.offset({horizontal, getDirection()});
+
+        if (!target)
+            continue;
+
+        if (board.isEnemy(*target, color))
+        {
+            moves.push_back({position, *target, PieceType::Pawn, MoveType::Capture});
+        }
+        else if (board.canEnPassant(position, *target))
+        {
+            moves.push_back({position, *target, PieceType::Pawn, MoveType::EnPassant});
+        }
     }
 
-    target = position.offset({-1, getDirection()});
-    if (target && board.isEnemy(*target, color))
-    {
-        moves.push_back(*target);
-    }
-
+    // Forward two
+    auto between = position.offset({0, getDirection()});
     target = position.offset({0, 2 * getDirection()});
-    if (target && !hasMoved && board.isEmpty(*target) &&
-        board.isEmpty(*position.offset({0, getDirection()})))
+    bool hasMoved = (color == Color::White) ? position.getVertical() != 2 : position.getVertical() != 7;
+
+    if (target && between && !hasMoved && board.isEmpty(*target) && board.isEmpty(*between))
     {
-        moves.push_back(*target);
+        moves.push_back({position, *target, PieceType::Pawn, MoveType::Charge});
     }
 
     return moves;
+}
+
+bool Pawn::isAttacking(Position target) const
+{
+    for (int horizontal : {-1, 1})
+    {
+        auto attackPosition = position.offset({horizontal, getDirection()});
+        if (attackPosition && *attackPosition == target)
+        {
+            return true;
+        }
+    }
+    return false;
 }

@@ -7,6 +7,7 @@
 class Pawn : public Piece
 {
   public:
-    Pawn(Position, Color);
-    std::vector<Position> getPseudoLegalMoves(Board&) const override;        
+    Pawn(Position, Color, const Board&);
+    std::vector<Move> getPseudoLegalMoves() const override;
+    bool isAttacking(Position) const override;
 };

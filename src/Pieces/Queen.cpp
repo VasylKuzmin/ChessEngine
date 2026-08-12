@@ -3,48 +3,35 @@
 #include <array>
 #include <utility>
 
-Queen::Queen(Position position, Color color) : Piece(position, color, PieceType::Queen)
+const std::array<Offset, 8> Queen::moveDirections = {
+    Offset{0, 1},
+    Offset{1, 1},
+    Offset{1, 0},
+    Offset{1, -1},
+    Offset{0, -1},
+    Offset{-1, -1},
+    Offset{-1, 0},
+    Offset{-1, 1},
+};
+
+Queen::Queen(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Queen, board)
 {
 }
 
-std::vector<Position> Queen::getPseudoLegalMoves(Board& board) const
+std::vector<Move> Queen::getPseudoLegalMoves() const
 {
-    static const std::array<Offset, 8> moveDirection = {
-        Offset{0, 1},
-        Offset{1, 1},
-        Offset{1, 0},
-        Offset{1, -1},
-        Offset{0, -1},
-        Offset{-1, -1},
-        Offset{-1, 0},
-        Offset{-1, 1},
-    };
+    return multiDirectionalMove(moveDirections);
+}
 
-    std::vector<Position> moves;
-
-    for (Offset direction : moveDirection)
+bool Queen::isAttacking(Position requestedTarget) const
+{
+    auto targets = getPseudoLegalMoves();
+    for (const auto& target : targets)
     {
-        auto target = position.offset(direction);
-
-        while (target)
+        if (target.to == requestedTarget)
         {
-            if (!board.isOccupied(*target))
-            {
-                moves.push_back(*target);
-            }
-            else if (board.isEnemy(*target, color))
-            {
-                moves.push_back(*target);
-                break;
-            }
-            else
-            {
-                break;
-            }
-
-            target = target->offset(direction);
+            return true;
         }
     }
-
-    return moves;
+    return false;
 }

@@ -7,6 +7,10 @@
 class Queen : public Piece
 {
   public:
-    Queen(Position, Color);
-    std::vector<Position> getPseudoLegalMoves(Board&) const override;
+    Queen(Position, Color, const Board&);
+    std::vector<Move> getPseudoLegalMoves() const override;
+    bool isAttacking(Position) const override;
+
+  private:
+    static const std::array<Offset, 8> moveDirections;
 };

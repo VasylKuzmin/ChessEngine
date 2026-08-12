@@ -12,6 +12,11 @@ std::optional<Position> Position::tryCreate(char horizontal, int vertical)
     return Position(horizontal, vertical);
 }
 
+Position Position::fromValid(char horizontal, int vertical)
+{
+    return Position(horizontal, vertical);
+}
+
 char Position::getHorizontal() const
 {
     return horizontal;
@@ -40,6 +45,11 @@ std::string Position::getPositionString() const
 std::optional<Position> Position::offset(Offset offset) const
 {
     return Position::tryCreate(horizontal + offset.horizontal, vertical + offset.vertical);
+}
+
+Position Position::offsetFromValid(Offset offset) const
+{
+    return Position::fromValid(horizontal + offset.horizontal, vertical + offset.vertical);
 }
 
 std::optional<Position> Position::fromString(const std::string& positionString)

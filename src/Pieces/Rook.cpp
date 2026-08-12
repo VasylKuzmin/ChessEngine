@@ -3,44 +3,31 @@
 #include <array>
 #include <utility>
 
-Rook::Rook(Position position, Color color) : Piece(position, color, PieceType::Rook)
+const std::array<Offset, 4> Rook::moveDirections = {
+    Offset{0, 1},
+    Offset{1, 0},
+    Offset{0, -1},
+    Offset{-1, 0},
+};
+
+Rook::Rook(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Rook, board)
 {
 }
 
-std::vector<Position> Rook::getPseudoLegalMoves(Board& board) const
+std::vector<Move> Rook::getPseudoLegalMoves() const
 {
-    static const std::array<Offset, 4> moveDirection = {
-        Offset{0, 1},
-        Offset{1, 0},
-        Offset{0, -1},
-        Offset{-1, 0},
-    };
+    return multiDirectionalMove(moveDirections);
+}
 
-    std::vector<Position> moves;
-
-    for (Offset direction : moveDirection)
+bool Rook::isAttacking(Position requestedTarget) const
+{
+    auto targets = getPseudoLegalMoves();
+    for (const auto& target : targets)
     {
-        auto target = position.offset(direction);
-
-        while (target)
+        if (target.to == requestedTarget)
         {
-            if (!board.isOccupied(*target))
-            {
-                moves.push_back(*target);
-            }
-            else if (board.isEnemy(*target, color))
-            {
-                moves.push_back(*target);
-                break;
-            }
-            else
-            {
-                break;
-            }
-
-            target = target->offset(direction);
+            return true;
         }
     }
-
-    return moves;
+    return false;
 }

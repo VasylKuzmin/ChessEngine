@@ -7,6 +7,10 @@
 class Knight : public Piece
 {
   public:
-    Knight(Position, Color);
-    std::vector<Position> getPseudoLegalMoves(Board&) const override;
+    Knight(Position, Color, const Board&);
+    std::vector<Move> getPseudoLegalMoves() const override;
+    bool isAttacking(Position) const override;
+
+  private:
+    static const std::array<Offset, 8> movePattern;
 };

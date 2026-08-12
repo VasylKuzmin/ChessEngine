@@ -7,6 +7,10 @@
 class Rook : public Piece
 {
   public:
-    Rook(Position, Color);
-    std::vector<Position> getPseudoLegalMoves(Board&) const override;
+    Rook(Position, Color, const Board&);
+    std::vector<Move> getPseudoLegalMoves() const override;
+    bool isAttacking(Position) const override;
+
+  private:
+    static const std::array<Offset, 4> moveDirections;
 };

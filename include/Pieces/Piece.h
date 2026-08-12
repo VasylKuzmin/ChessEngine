@@ -3,16 +3,18 @@
 #include "Color.h"
 #include "PieceType.h"
 #include "Position.h"
+#include "Move.h"
 
 #include <string_view>
 #include <vector>
+#include <span>
 
 class Board; // Forward declaration of Board class
 
 class Piece
 {
   public:
-    Piece(Position, Color, PieceType);
+    Piece(Position, Color, PieceType, const Board&);
     void setPosition(Position);
     Color getColor() const;
     virtual int getDirection() const; // returns 1 for White and -1 for Black
@@ -20,11 +22,14 @@ class Piece
     PieceType getType() const;
     std::string_view getTypeString() const;
     Position getPosition() const;
-    virtual std::vector<Position> getPseudoLegalMoves(Board&) const = 0;
+    std::vector<Move> multiDirectionalMove(std::span<const Offset>) const;
+    std::vector<Move> targetedMove(std::span<const Offset>) const;
+    virtual bool isAttacking(Position) const = 0;
+    virtual std::vector<Move> getPseudoLegalMoves() const = 0;
 
   protected:
     Position position;
     Color color;
     PieceType type;
-    bool hasMoved{false};
+    const Board& board;
 };

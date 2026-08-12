@@ -3,33 +3,44 @@
 #include <array>
 #include <utility>
 
-King::King(Position position, Color color) : Piece(position, color, PieceType::King)
+const std::array<Offset, 8> King::movePattern = {Offset{0, 1},
+                                                 Offset{1, 1},
+                                                 Offset{1, 0},
+                                                 Offset{1, -1},
+                                                 Offset{0, -1},
+                                                 Offset{-1, -1},
+                                                 Offset{-1, 0},
+                                                 Offset{-1, 1}};
+
+King::King(Position position, Color color, const Board& board)
+    : Piece(position, color, PieceType::King, board)
 {
 }
 
-std::vector<Position> King::getPseudoLegalMoves(Board& board) const
+std::vector<Move> King::getPseudoLegalMoves() const
 {
-    static const std::array<Offset, 8> movePattern = {Offset{0, 1},
-                                                      Offset{1, 1},
-                                                      Offset{1, 0},
-                                                      Offset{1, -1},
-                                                      Offset{0, -1},
-                                                      Offset{-1, -1},
-                                                      Offset{-1, 0},
-                                                      Offset{-1, 1}};
+    auto moves = targetedMove(movePattern);
 
-    std::vector<Position> moves;
-    std::optional<Position> target;
+    if (board.canCastleLeft(color))
+        moves.push_back(
+            {position, position.offsetFromValid({-2, 0}), PieceType::King, MoveType::Castling});
 
-    for (Offset move : movePattern)
-    {
-        target = position.offset(move);
-
-        if (target && board.isEmptyOrEnemy(*target, color))
-        {
-            moves.push_back(*target);
-        }
-    }
+    if (board.canCastleRight(color))
+        moves.push_back(
+            {position, position.offsetFromValid({2, 0}), PieceType::King, MoveType::Castling});
 
     return moves;
+}
+
+bool King::isAttacking(Position requestedTarget) const
+{
+    for (Offset move : movePattern)
+    {
+        auto target = position.offset(move);
+        if (target && *target == requestedTarget)
+        {
+            return true;
+        }
+    }
+    return false;
 }

@@ -3,44 +3,31 @@
 #include <array>
 #include <utility>
 
-Bishop::Bishop(Position position, Color color) : Piece(position, color, PieceType::Bishop)
+const std::array<Offset, 4> Bishop::moveDirections = {
+    Offset{1, 1},
+    Offset{1, -1},
+    Offset{-1, -1},
+    Offset{-1, 1},
+};
+
+Bishop::Bishop(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Bishop, board)
 {
 }
 
-std::vector<Position> Bishop::getPseudoLegalMoves(Board& board) const
+std::vector<Move> Bishop::getPseudoLegalMoves() const
 {
-    static const std::array<Offset, 4> moveDirection = {
-        Offset{1, 1},
-        Offset{1, -1},
-        Offset{-1, -1},
-        Offset{-1, 1},
-    };
+    return multiDirectionalMove(moveDirections);
+}
 
-    std::vector<Position> moves;
-
-    for (Offset direction : moveDirection)
+bool Bishop::isAttacking(Position requestedTarget) const
+{
+    auto targets = getPseudoLegalMoves();
+    for (const auto& target : targets)
     {
-        auto target = position.offset(direction);
-
-        while (target)
+        if (target.to == requestedTarget)
         {
-            if (!board.isOccupied(*target))
-            {
-                moves.push_back(*target);
-            }
-            else if (board.isEnemy(*target, color))
-            {
-                moves.push_back(*target);
-                break;
-            }
-            else
-            {
-                break;
-            }
-
-            target = target->offset(direction);
+            return true;
         }
     }
-
-    return moves;
+    return false;
 }
