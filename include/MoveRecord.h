@@ -1,9 +1,9 @@
 #pragma once
 
+#include "CastlingRights.h"
 #include "Move.h"
 #include "Pieces/Piece.h"
 #include "Position.h"
-#include "CastlingRights.h"
 
 #include <memory>
 #include <optional>

@@ -9,9 +9,10 @@
 
 #include <functional>
 #include <iostream>
-#include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory>
+#include <utility>
 
 Board::Board()
 {

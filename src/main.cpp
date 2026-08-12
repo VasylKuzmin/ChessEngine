@@ -1,4 +1,8 @@
-﻿#include "DoubleDecker.h"
+﻿#include "PieceType.h"
+#include "Position.h"
+#include "Color.h"
+#include "Board.h"
+
 
 int main()
 {

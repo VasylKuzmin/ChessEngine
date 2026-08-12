@@ -2,6 +2,7 @@
 
 #include "Piece.h"
 
+#include <array>
 #include <vector>
 
 class Knight : public Piece

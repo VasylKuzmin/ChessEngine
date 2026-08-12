@@ -1,7 +1,5 @@
 #include "Position.h"
 
-#include <stdexcept>
-
 std::optional<Position> Position::tryCreate(char horizontal, int vertical)
 {
     if (horizontal < 'a' || horizontal > 'h' || vertical < 1 || vertical > 8)

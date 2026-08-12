@@ -1,7 +1,6 @@
 #include <Board.h>
 #include <Pieces/Rook.h>
 #include <array>
-#include <utility>
 
 const std::array<Offset, 4> Rook::moveDirections = {
     Offset{0, 1},
@@ -10,7 +9,8 @@ const std::array<Offset, 4> Rook::moveDirections = {
     Offset{-1, 0},
 };
 
-Rook::Rook(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Rook, board)
+Rook::Rook(Position position, Color color, const Board& board)
+    : Piece(position, color, PieceType::Rook, board)
 {
 }
 

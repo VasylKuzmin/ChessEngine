@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Color.h"
+#include "Move.h"
 #include "PieceType.h"
 #include "Position.h"
-#include "Move.h"
 
+#include <span>
 #include <string_view>
 #include <vector>
-#include <span>
 
 class Board; // Forward declaration of Board class
 

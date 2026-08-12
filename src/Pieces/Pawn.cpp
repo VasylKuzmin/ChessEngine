@@ -1,8 +1,10 @@
+
 #include "Pieces/Pawn.h"
 
 #include "Board.h"
 
-Pawn::Pawn(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Pawn, board)
+Pawn::Pawn(Position position, Color color, const Board& board)
+    : Piece(position, color, PieceType::Pawn, board)
 {
 }
 
@@ -38,7 +40,8 @@ std::vector<Move> Pawn::getPseudoLegalMoves() const
     // Forward two
     auto between = position.offset({0, getDirection()});
     target = position.offset({0, 2 * getDirection()});
-    bool hasMoved = (color == Color::White) ? position.getVertical() != 2 : position.getVertical() != 7;
+    bool hasMoved =
+        (color == Color::White) ? position.getVertical() != 2 : position.getVertical() != 7;
 
     if (target && between && !hasMoved && board.isEmpty(*target) && board.isEmpty(*between))
     {

@@ -1,7 +1,6 @@
 #include <Board.h>
 #include <Pieces/King.h>
 #include <array>
-#include <utility>
 
 const std::array<Offset, 8> King::movePattern = {Offset{0, 1},
                                                  Offset{1, 1},

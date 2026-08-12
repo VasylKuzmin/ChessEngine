@@ -1,7 +1,6 @@
 #include <Board.h>
 #include <Pieces/Queen.h>
 #include <array>
-#include <utility>
 
 const std::array<Offset, 8> Queen::moveDirections = {
     Offset{0, 1},
@@ -14,7 +13,8 @@ const std::array<Offset, 8> Queen::moveDirections = {
     Offset{-1, 1},
 };
 
-Queen::Queen(Position position, Color color, const Board& board) : Piece(position, color, PieceType::Queen, board)
+Queen::Queen(Position position, Color color, const Board& board)
+    : Piece(position, color, PieceType::Queen, board)
 {
 }
 

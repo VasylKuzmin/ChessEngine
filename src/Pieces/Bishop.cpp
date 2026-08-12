@@ -1,7 +1,6 @@
 #include <Board.h>
 #include <Pieces/Bishop.h>
 #include <array>
-#include <utility>
 
 const std::array<Offset, 4> Bishop::moveDirections = {
     Offset{1, 1},

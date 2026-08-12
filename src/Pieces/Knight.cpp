@@ -1,7 +1,6 @@
 #include <Board.h>
 #include <Pieces/Knight.h>
 #include <array>
-#include <utility>
 
 const std::array<Offset, 8> Knight::movePattern = {Offset{-1, 2},
                                                    Offset{1, 2},

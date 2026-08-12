@@ -1,22 +1,37 @@
 # Visual Studio
 .vs/
+*.user
+*.suo
 
 # CMake build output
 out/
-
-# Build directories
 build/
 cmake-build-*/
 
-# Compiled binaries
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+# Compiled binaries / intermediate files
 *.exe
 *.dll
 *.obj
 *.lib
 *.pdb
+*.ilk
 
 # Debug/Release output
 Debug/
 Release/
 x64/
 x86/
+
+# Visual Studio Code (if applicable)
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

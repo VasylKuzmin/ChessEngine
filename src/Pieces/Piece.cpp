@@ -1,8 +1,11 @@
 #include "Pieces/Piece.h"
+
 #include "Board.h"
 
 Piece::Piece(Position position, Color color, PieceType type, const Board& board)
-    : position(position), color(color), type(type), board(board) {}
+    : position(position), color(color), type(type), board(board)
+{
+}
 
 void Piece::setPosition(Position newPosition)
 {
@@ -71,11 +74,10 @@ std::vector<Move> Piece::multiDirectionalMove(std::span<const Offset> moveDirect
 std::vector<Move> Piece::targetedMove(std::span<const Offset> moveTargets) const
 {
     std::vector<Move> moves;
-    std::optional<Position> target;
 
     for (Offset move : moveTargets)
     {
-        target = position.offset(move);
+        auto target = position.offset(move);
 
         if (!target)
             continue;

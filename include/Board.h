@@ -1,17 +1,16 @@
 #pragma once
 
+#include "CastlingRights.h"
 #include "Color.h"
+#include "Move.h"
+#include "MoveRecord.h"
 #include "PieceType.h"
 #include "Pieces/Piece.h"
 #include "Position.h"
-#include "Move.h"
-#include "MoveRecord.h"
-#include "CastlingRights.h"
 
 #include <array>
 #include <memory>
 #include <vector>
-#include <optional>
 
 class Board
 {
@@ -40,7 +39,7 @@ class Board
     void createPiece(PieceType, Position, Color);
     void setUpCastlingRights();
 
-    //temporary for debugging purposes 
+    // temporary for debugging purposes
     void printPieceInfo(Position) const;
     void promptUserMove();
     //
