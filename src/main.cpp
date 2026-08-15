@@ -1,48 +1,44 @@
-﻿#include "PieceType.h"
+﻿#include "Board.h"
+#include "GUI/Renderer.h"
 #include "Position.h"
-#include "Color.h"
-#include "Board.h"
+#include "Game.h"
 
+#include <SDL3/SDL.h>
+#include <utility>
 
 int main()
 {
     Board board;
-     board.createPiece(PieceType::Pawn, Position::fromValid('a', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('b', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('c', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('d', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('e', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('f', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('g', 2), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('h', 2), Color::White);
-     board.createPiece(PieceType::Rook, Position::fromValid('a', 1), Color::White);
-     board.createPiece(PieceType::Rook, Position::fromValid('h', 1), Color::White);
-     board.createPiece(PieceType::Knight, Position::fromValid('b', 1), Color::White);
-     board.createPiece(PieceType::Knight, Position::fromValid('g', 1), Color::White);
-     board.createPiece(PieceType::Bishop, Position::fromValid('c', 1), Color::White);
-     board.createPiece(PieceType::Bishop, Position::fromValid('f', 1), Color::White);
-     board.createPiece(PieceType::Queen, Position::fromValid('d', 1), Color::White);
-     board.createPiece(PieceType::King, Position::fromValid('e', 1), Color::White);
-     board.createPiece(PieceType::Pawn, Position::fromValid('a', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('b', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('c', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('d', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('e', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('f', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('g', 7), Color::Black);
-     board.createPiece(PieceType::Pawn, Position::fromValid('h', 7), Color::Black);
-     board.createPiece(PieceType::Rook, Position::fromValid('a', 8), Color::Black);
-     board.createPiece(PieceType::Rook, Position::fromValid('h', 8), Color::Black);
-     board.createPiece(PieceType::Knight, Position::fromValid('b', 8), Color::Black);
-     board.createPiece(PieceType::Knight, Position::fromValid('g', 8), Color::Black);
-     board.createPiece(PieceType::Bishop, Position::fromValid('c', 8), Color::Black);
-     board.createPiece(PieceType::Bishop, Position::fromValid('f', 8), Color::Black);
-     board.createPiece(PieceType::Queen, Position::fromValid('d', 8), Color::Black);
-     board.createPiece(PieceType::King, Position::fromValid('e', 8), Color::Black);
+    board.setUpDefault();
+    
+    Game game;
 
-    //board.createPiece(PieceType::King, Position::fromValid('a', 1), Color::White);
-    //board.createPiece(PieceType::Queen, Position::fromValid('c', 3), Color::Black);
+    Renderer renderer(game);
+    if (!renderer.initialize())
+        return 1;
 
-    board.promptUserMove();
+    bool running = true;
+
+    while (running)
+    {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_EVENT_QUIT)
+                running = false;
+            if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+            {
+                Position clickPosition = Position::fromValid(
+                    Renderer::convertCoords(std::pair{event.button.x, event.button.y}));
+                game.handleClick(board, clickPosition);
+            }
+
+        }
+
+        renderer.render(board);
+    }
+
+    renderer.shutdown();
+
     return 0;
 }

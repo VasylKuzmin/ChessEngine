@@ -9,10 +9,10 @@
 
 #include <functional>
 #include <iostream>
-#include <unordered_map>
-#include <vector>
 #include <memory>
+#include <unordered_map>
 #include <utility>
+#include <vector>
 
 Board::Board()
 {
@@ -92,6 +92,17 @@ bool Board::isCheckmate(Color color)
 bool Board::isStalemate(Color color)
 {
     return !isInCheck(color) && !hasLegalMoves(color);
+}
+
+std::optional<Position> Board::getCheckedKing() const
+{
+    if (isInCheck(Color::White))
+        return whiteKingPosition;
+
+    if (isInCheck(Color::Black))
+        return blackKingPosition;
+
+    return std::nullopt;
 }
 
 bool Board::canCastleRight(Color color) const
@@ -372,56 +383,92 @@ void Board::setUpCastlingRights()
         castlingRights.blackKingsRook = true;
 }
 
-void Board::promptUserMove()
+void Board::setUpDefault()
 {
-    setUpCastlingRights();
-
-    while (true)
-    {
-        std::string input;
-        std::cout << "Enter the position of the piece you want to move: ";
-        std::getline(std::cin, input);
-        auto piece = getPiece(*Position::fromString(input));
-        if (piece == nullptr)
-        {
-            continue;
-        }
-        auto possibleMoves = getLegalMoves(*piece);
-        if (possibleMoves.empty())
-        {
-            continue;
-        }
-        for (const Move& move : possibleMoves)
-        {
-            std::cout << "Possible move: " << move.to.getPositionString() << std::endl;
-        }
-        std::cout << "Enter the position to move to: ";
-        std::getline(std::cin, input);
-        auto moveTo = Position::fromString(input);
-        for (const Move& move : possibleMoves)
-        {
-            if (move.to == *moveTo)
-            {
-                movePiece(move);
-                std::cout << "Moved " << piece->getColorString() << " " << piece->getTypeString()
-                          << " to " << move.to.getPositionString() << std::endl;
-
-                Color color =
-                    (getPiece(move.to)->getColor() == Color::White) ? Color::Black : Color::White;
-                if (isCheckmate(color))
-                {
-                    std::cout << std::endl
-                              << piece->getColorString() << " checkmated their opponent"
-                              << std::endl;
-                    return;
-                }
-
-                if (isStalemate(color))
-                {
-                    std::cout << std::endl << "stalemate" << std::endl;
-                    return;
-                }
-            }
-        }
-    }
+    createPiece(PieceType::Pawn, Position::fromValid('a', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('b', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('c', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('d', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('e', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('f', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('g', 2), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('h', 2), Color::White);
+    createPiece(PieceType::Rook, Position::fromValid('a', 1), Color::White);
+    createPiece(PieceType::Rook, Position::fromValid('h', 1), Color::White);
+    createPiece(PieceType::Knight, Position::fromValid('b', 1), Color::White);
+    createPiece(PieceType::Knight, Position::fromValid('g', 1), Color::White);
+    createPiece(PieceType::Bishop, Position::fromValid('c', 1), Color::White);
+    createPiece(PieceType::Bishop, Position::fromValid('f', 1), Color::White);
+    createPiece(PieceType::Queen, Position::fromValid('d', 1), Color::White);
+    createPiece(PieceType::King, Position::fromValid('e', 1), Color::White);
+    createPiece(PieceType::Pawn, Position::fromValid('a', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('b', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('c', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('d', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('e', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('f', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('g', 7), Color::Black);
+    createPiece(PieceType::Pawn, Position::fromValid('h', 7), Color::Black);
+    createPiece(PieceType::Rook, Position::fromValid('a', 8), Color::Black);
+    createPiece(PieceType::Rook, Position::fromValid('h', 8), Color::Black);
+    createPiece(PieceType::Knight, Position::fromValid('b', 8), Color::Black);
+    createPiece(PieceType::Knight, Position::fromValid('g', 8), Color::Black);
+    createPiece(PieceType::Bishop, Position::fromValid('c', 8), Color::Black);
+    createPiece(PieceType::Bishop, Position::fromValid('f', 8), Color::Black);
+    createPiece(PieceType::Queen, Position::fromValid('d', 8), Color::Black);
+    createPiece(PieceType::King, Position::fromValid('e', 8), Color::Black);
 }
+
+//void Board::promptUserMove()
+//{
+//    setUpCastlingRights();
+//
+//    while (true)
+//    {
+//        std::string input;
+//        std::cout << "Enter the position of the piece you want to move: ";
+//        std::getline(std::cin, input);
+//        auto piece = getPiece(*Position::fromString(input));
+//        if (piece == nullptr)
+//        {
+//            continue;
+//        }
+//        auto possibleMoves = getLegalMoves(*piece);
+//        if (possibleMoves.empty())
+//        {
+//            continue;
+//        }
+//        for (const Move& move : possibleMoves)
+//        {
+//            std::cout << "Possible move: " << move.to.getPositionString() << std::endl;
+//        }
+//        std::cout << "Enter the position to move to: ";
+//        std::getline(std::cin, input);
+//        auto moveTo = Position::fromString(input);
+//        for (const Move& move : possibleMoves)
+//        {
+//            if (move.to == *moveTo)
+//            {
+//                movePiece(move);
+//                std::cout << "Moved " << piece->getColorString() << " " << piece->getTypeString()
+//                          << " to " << move.to.getPositionString() << std::endl;
+//
+//                Color color =
+//                    (getPiece(move.to)->getColor() == Color::White) ? Color::Black : Color::White;
+//                if (isCheckmate(color))
+//                {
+//                    std::cout << std::endl
+//                              << piece->getColorString() << " checkmated their opponent"
+//                              << std::endl;
+//                    return;
+//                }
+//
+//                if (isStalemate(color))
+//                {
+//                    std::cout << std::endl << "stalemate" << std::endl;
+//                    return;
+//                }
+//            }
+//        }
+//    }
+//}

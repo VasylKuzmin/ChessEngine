@@ -15,6 +15,11 @@ Position Position::fromValid(char horizontal, int vertical)
     return Position(horizontal, vertical);
 }
 
+Position Position::fromValid(std::pair<char, int> coords)
+{
+    return Position(coords.first, coords.second);
+}
+
 char Position::getHorizontal() const
 {
     return horizontal;
@@ -38,6 +43,11 @@ int Position::getVerticalIndex() const
 std::string Position::getPositionString() const
 {
     return std::string(1, horizontal) + std::to_string(vertical);
+}
+
+std::pair<char, int> Position::getPair() const
+{
+    return {horizontal, vertical};
 }
 
 std::optional<Position> Position::offset(Offset offset) const

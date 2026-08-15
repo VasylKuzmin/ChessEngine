@@ -28,6 +28,7 @@ class Board
     bool canCastleRight(Color) const;
     bool isCheckmate(Color);
     bool isStalemate(Color);
+    std::optional<Position> getCheckedKing() const;
     const MoveRecord* getLastMove() const;
 
     std::vector<Move> getLegalMoves(const Piece&);
@@ -38,10 +39,11 @@ class Board
     void placePiece(Position, std::unique_ptr<Piece>);
     void createPiece(PieceType, Position, Color);
     void setUpCastlingRights();
+    void setUpDefault();
 
     // temporary for debugging purposes
     void printPieceInfo(Position) const;
-    void promptUserMove();
+    //void promptUserMove();
     //
 
   private:
