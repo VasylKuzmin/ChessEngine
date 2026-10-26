@@ -7,15 +7,21 @@ endif()
 
 project ("ChessEngine")
 
-find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+find_package(SDL3_ttf REQUIRED)
 
-add_executable (ChessEngine "src/main.cpp" "src/Pieces/Pawn.cpp" "src/Pieces/Piece.cpp" "src/Position.cpp" "src/Board.cpp"  "src/Pieces/Knight.cpp" "src/Pieces/King.cpp" "src/Pieces/Rook.cpp" "src/Pieces/Bishop.cpp" "src/Pieces/Queen.cpp" "src/GUI/Renderer.cpp" "src/Game.cpp")
+add_executable (ChessEngine "src/main.cpp" "src/Pieces/Pawn.cpp" "src/Pieces/Piece.cpp" "src/Position.cpp" "src/Board.cpp"  "src/Pieces/Knight.cpp" "src/Pieces/King.cpp" "src/Pieces/Rook.cpp" "src/Pieces/Bishop.cpp" "src/Pieces/Queen.cpp" "src/GUI/Renderer.cpp" "src/Game.cpp" "src/GUI/TextureHandler.cpp" "include/GUI/SDLContext.h" "src/GUI/SDLContext.cpp")
 
 target_include_directories(ChessEngine PRIVATE
     ${CMAKE_SOURCE_DIR}/include
 )
 
-target_link_libraries(ChessEngine PRIVATE SDL3::SDL3)
+target_compile_definitions(ChessEngine PRIVATE
+    ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets"
+)
+
+target_link_libraries(ChessEngine PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ChessEngine PROPERTY CXX_STANDARD 20)

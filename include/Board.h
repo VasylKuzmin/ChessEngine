@@ -34,17 +34,18 @@ class Board
     std::vector<Move> getLegalMoves(const Piece&);
     bool hasLegalMoves(Color);
     void movePiece(Move);
+    void removePiece(const Position);
     void undoLastMove();
     std::unique_ptr<Piece> takePiece(Position);
     void placePiece(Position, std::unique_ptr<Piece>);
     void createPiece(PieceType, Position, Color);
+    void promoteLastMovedPiece(PieceType, Color);
     void setUpCastlingRights();
     void setUpDefault();
+    std::vector<MoveRecord> getMoveHistory() const;
 
     // temporary for debugging purposes
     void printPieceInfo(Position) const;
-    //void promptUserMove();
-    //
 
   private:
     std::array<std::array<std::unique_ptr<Piece>, 8>, 8> squares;

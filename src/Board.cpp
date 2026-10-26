@@ -112,9 +112,13 @@ bool Board::canCastleRight(Color color) const
     bool rookHasRight =
         (color == Color::White) ? castlingRights.whiteKingsRook : castlingRights.blackKingsRook;
     bool notInCheck = !isInCheck(color);
+    if (!position.offset({1, 0}))
+        return false;
     Position square = position.offsetFromValid({1, 0});
     bool betweenSquare = isEmpty(square) && !isUnderAttack(square, color);
 
+    if (!position.offset({2, 0}))
+        return false;
     square = position.offsetFromValid({2, 0});
     bool endSquare = isEmpty(square);
 
@@ -127,14 +131,19 @@ bool Board::canCastleLeft(Color color) const
     bool hasRight = (color == Color::White) ? castlingRights.whiteKing : castlingRights.blackKing;
     bool rookHasRight =
         (color == Color::White) ? castlingRights.whiteQueensRook : castlingRights.blackQueensRook;
+    bool notInCheck = !isInCheck(color);
 
+    if (!position.offset({-1, 0}))
+        return false;
     Position square = position.offsetFromValid({-1, 0});
     bool betweenSquare = isEmpty(square) && !isUnderAttack(square, color);
 
+    if (!position.offset({-2, 0}))
+        return false;
     square = position.offsetFromValid({-2, 0});
     bool endSquare = isEmpty(square);
 
-    return hasRight && rookHasRight && !isInCheck(color) && betweenSquare && endSquare;
+    return hasRight && rookHasRight && notInCheck && betweenSquare && endSquare;
 }
 
 std::vector<Move> Board::getLegalMoves(const Piece& piece)
@@ -164,11 +173,13 @@ void Board::undoLastMove()
         return;
 
     MoveRecord& lastMove = moveHistory.back();
+    Color color = getPiece(lastMove.move.to)->getColor();
+    Color capturedColor = (color == Color::White) ? Color::Black : Color::White;
     placePiece(lastMove.move.from, takePiece(lastMove.move.to));
 
     if (lastMove.capturedPiece)
     {
-        placePiece(*lastMove.capturedPosition, std::move(lastMove.capturedPiece));
+        createPiece(*lastMove.capturedPiece, *lastMove.capturedPosition, capturedColor);
     }
 
     if (lastMove.move.pieceType == PieceType::King)
@@ -197,8 +208,19 @@ void Board::undoLastMove()
         }
     }
 
+    if (lastMove.wasPromotion)
+    {
+        createPiece(PieceType::Pawn, lastMove.move.from, color);
+    }
+
     castlingRights = lastMove.castlingRights;
     moveHistory.pop_back();
+}
+
+void Board::promoteLastMovedPiece(PieceType type, Color color)
+{
+    moveHistory.back().wasPromotion = true;
+    createPiece(type, moveHistory.back().move.to, color);
 }
 
 void Board::movePiece(Move move)
@@ -210,15 +232,16 @@ void Board::movePiece(Move move)
     {
         Position enPassantTarget =
             move.to.offset({0, -getPiece(move.from)->getDirection()}).value();
-        record.capturedPiece = takePiece(enPassantTarget);
+        record.capturedPiece = PieceType::Pawn;
         record.capturedPosition = enPassantTarget;
+        removePiece(enPassantTarget);
     }
     else if (move.type == MoveType::Capture)
     {
-        record.capturedPiece = takePiece(move.to);
+        record.capturedPiece = getPiece(move.to)->getType();
         record.capturedPosition = move.to;
 
-        if (record.capturedPiece->getType() == PieceType::Rook)
+        if (record.capturedPiece == PieceType::Rook)
         {
             if (*record.capturedPosition == Position::fromValid('a', 1))
                 castlingRights.whiteQueensRook = false;
@@ -279,6 +302,8 @@ void Board::movePiece(Move move)
         }
     }
 
+    record.movedPiece = piece->getType();
+    record.movedPieceColor = piece->getColor();
     moveHistory.push_back(std::move(record));
 }
 
@@ -294,6 +319,11 @@ const MoveRecord* Board::getLastMove() const
 std::unique_ptr<Piece> Board::takePiece(Position position)
 {
     return std::move(squares[position.getHorizontalIndex()][position.getVerticalIndex()]);
+}
+
+void Board::removePiece(const Position position)
+{
+    squares[position.getHorizontalIndex()][position.getVerticalIndex()].reset();
 }
 
 void Board::placePiece(Position position, std::unique_ptr<Piece> piece)
@@ -417,58 +447,11 @@ void Board::setUpDefault()
     createPiece(PieceType::Bishop, Position::fromValid('f', 8), Color::Black);
     createPiece(PieceType::Queen, Position::fromValid('d', 8), Color::Black);
     createPiece(PieceType::King, Position::fromValid('e', 8), Color::Black);
+
+    setUpCastlingRights();
 }
 
-//void Board::promptUserMove()
-//{
-//    setUpCastlingRights();
-//
-//    while (true)
-//    {
-//        std::string input;
-//        std::cout << "Enter the position of the piece you want to move: ";
-//        std::getline(std::cin, input);
-//        auto piece = getPiece(*Position::fromString(input));
-//        if (piece == nullptr)
-//        {
-//            continue;
-//        }
-//        auto possibleMoves = getLegalMoves(*piece);
-//        if (possibleMoves.empty())
-//        {
-//            continue;
-//        }
-//        for (const Move& move : possibleMoves)
-//        {
-//            std::cout << "Possible move: " << move.to.getPositionString() << std::endl;
-//        }
-//        std::cout << "Enter the position to move to: ";
-//        std::getline(std::cin, input);
-//        auto moveTo = Position::fromString(input);
-//        for (const Move& move : possibleMoves)
-//        {
-//            if (move.to == *moveTo)
-//            {
-//                movePiece(move);
-//                std::cout << "Moved " << piece->getColorString() << " " << piece->getTypeString()
-//                          << " to " << move.to.getPositionString() << std::endl;
-//
-//                Color color =
-//                    (getPiece(move.to)->getColor() == Color::White) ? Color::Black : Color::White;
-//                if (isCheckmate(color))
-//                {
-//                    std::cout << std::endl
-//                              << piece->getColorString() << " checkmated their opponent"
-//                              << std::endl;
-//                    return;
-//                }
-//
-//                if (isStalemate(color))
-//                {
-//                    std::cout << std::endl << "stalemate" << std::endl;
-//                    return;
-//                }
-//            }
-//        }
-//    }
-//}
+std::vector<MoveRecord> Board::getMoveHistory() const
+{
+    return moveHistory;
+}

@@ -9,7 +9,6 @@ enum class MoveType
     Capture,
     Castling,
     EnPassant,
-    Promotion,
     Charge
 };
 

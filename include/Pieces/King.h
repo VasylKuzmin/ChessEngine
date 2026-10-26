@@ -3,7 +3,7 @@
 #include "Piece.h"
 
 #include <array>
-#include <vector>]
+#include <vector>
 
 class King : public Piece
 {

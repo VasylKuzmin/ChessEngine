@@ -1,44 +1,53 @@
 ﻿#include "Board.h"
 #include "GUI/Renderer.h"
-#include "Position.h"
 #include "Game.h"
+#include "Position.h"
 
 #include <SDL3/SDL.h>
 #include <utility>
 
 int main()
 {
-    Board board;
-    board.setUpDefault();
-    
-    Game game;
-
-    Renderer renderer(game);
-    if (!renderer.initialize())
-        return 1;
-
-    bool running = true;
-
-    while (running)
+    try
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
+        Board board;
+        board.setUpDefault();
+        Game game;
+        Renderer renderer(game);
+        renderer.initialize();
+
+        bool running = true;
+
+        while (running)
         {
-            if (event.type == SDL_EVENT_QUIT)
-                running = false;
-            if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
             {
-                Position clickPosition = Position::fromValid(
-                    Renderer::convertCoords(std::pair{event.button.x, event.button.y}));
-                game.handleClick(board, clickPosition);
+                if (event.type == SDL_EVENT_QUIT)
+                    running = false;
+                if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+                {
+                    auto coords = std::pair{static_cast<float>(event.button.x),
+                                            static_cast<float>(event.button.y)};
+                    auto positionCoords =
+                        Renderer::convertCoords(coords);
+                    std::optional<Position> clickPosition =
+                        Position::tryCreate(positionCoords.first, positionCoords.second);
+                    if (clickPosition)
+                        game.handlePositionClick(board, clickPosition);
+                    else
+                        game.handleClick(board, coords, renderer.getSquareSize());
+                }
             }
-
+            renderer.render(board);
         }
-
-        renderer.render(board);
     }
 
-    renderer.shutdown();
+    catch (const std::exception& e)
+    {
+        SDL_Log("Error: %s", e.what());
+        return 1;
+    }
 
     return 0;
 }

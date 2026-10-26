@@ -12,6 +12,9 @@ struct MoveRecord
 {
     Move move;
     CastlingRights castlingRights;
-    std::unique_ptr<Piece> capturedPiece = nullptr;
+    std::optional<PieceType> capturedPiece = std::nullopt;
     std::optional<Position> capturedPosition = std::nullopt;
+    PieceType movedPiece;
+    Color movedPieceColor;
+    bool wasPromotion = false;
 };

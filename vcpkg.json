@@ -1,5 +1,10 @@
 {
   "dependencies": [
-    "sdl3"
+    "sdl3",
+    {
+      "name": "sdl3-image",
+      "features": [ "png" ]
+    },
+    "sdl3-ttf"
   ]
 }
